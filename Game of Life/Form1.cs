@@ -18,6 +18,7 @@ namespace Game_of_Life
         
         // The universe array
         bool[,] universe = new bool[5, 5];
+        bool[,] scratchPad = new bool[5, 5];
 
         // Drawing colors
         Color gridColor = Color.Black;
@@ -57,17 +58,25 @@ namespace Game_of_Life
                     
                     if ((count < 2) || (count > 3))
                     {
-                        // dead
+                        // Cell will die and so will not be saved into scratchPad
+                        scratchPad[x, y] = !scratchPad[x, y];
                     }
                     else if ((count == 2|| count == 3))
                     {
-                        // alive 
+                        // Cell with live and so will be saved into scratchPad
+                        scratchPad[x, y] = scratchPad[x, y];
                     }
 
                     // turn on and off scartch pad
+                    scratchPad[x, y] = !scratchPad[x, y];
                 }
             }
-            
+
+            // copy from scratchpad
+            bool[,] temp = universe;
+            universe = scratchPad;
+            scratchPad = temp;
+
             // Increment generation count
             generations++;
 
@@ -80,15 +89,16 @@ namespace Game_of_Life
         private void Timer_Tick(object sender, EventArgs e)
         {
             NextGeneration();
+                
         }
 
         private void graphicsPanel1_Paint(object sender, PaintEventArgs e)
         {
             // Calculate the width and height of each cell in pixels
             // CELL WIDTH = WINDOW WIDTH / NUMBER OF CELLS IN X
-            float cellWidth = graphicsPanel1.ClientSize.Width / universe.GetLength(0);
+            int cellWidth = graphicsPanel1.ClientSize.Width / universe.GetLength(0);
             // CELL HEIGHT = WINDOW HEIGHT / NUMBER OF CELLS IN Y
-            float cellHeight = graphicsPanel1.ClientSize.Height / universe.GetLength(1);
+            int cellHeight = graphicsPanel1.ClientSize.Height / universe.GetLength(1);
 
             // A Pen for drawing the grid lines (color, width)
             Pen gridPen = new Pen(gridColor, 1);
@@ -103,25 +113,25 @@ namespace Game_of_Life
                 for (int x = 0; x < universe.GetLength(0); x++)
                 {
                     // A rectangle to represent each cell in pixels
-                    RectangleF cellRectF = RectangleF.Empty;
-                    cellRectF.X = x * cellWidth;
-                    cellRectF.Y = y * cellHeight;
-                    cellRectF.Width = cellWidth;
-                    cellRectF.Height = cellHeight;
-                    //Rectangle cellRect = Rectangle.Empty;
-                    //cellRect.X = x * cellWidth;
-                    //cellRect.Y = y * cellHeight;
-                    //cellRect.Width = cellWidth;
-                    //cellRect.Height = cellHeight;
+                    //RectangleF cellRectF = RectangleF.Empty;
+                    //cellRectF.X = x * cellWidth;
+                    //cellRectF.Y = y * cellHeight;
+                    //cellRectF.Width = cellWidth;
+                    //cellRectF.Height = cellHeight;
+                    Rectangle cellRect = Rectangle.Empty;
+                    cellRect.X =  x * cellWidth;
+                    cellRect.Y =  y * cellHeight;
+                    cellRect.Width = cellWidth;
+                    cellRect.Height = cellHeight;
 
                     // Fill the cell with a brush if alive
                     if (universe[x, y] == true)
                     {
-                        e.Graphics.FillRectangle(cellBrush, cellRectF);
+                        e.Graphics.FillRectangle(cellBrush, cellRect);
                     }
 
                     // Outline the cell with a pen
-                    e.Graphics.DrawRectangle(gridPen, cellRectF.X, cellRectF.Y, cellRectF.Width, cellRectF.Height);
+                    e.Graphics.DrawRectangle(gridPen, cellRect.X, cellRect.Y, cellRect.Width, cellRect.Height);
                 }
             }
 
@@ -231,13 +241,11 @@ namespace Game_of_Life
         {
             // The universe array
             universe = new bool[xUni, yUni];
+            scratchPad = new bool[xUni, yUni];
 
             // Drawing colors
             gridColor = Color.Black;
             cellColor = Color.Gray;
-
-            // The Timer class
-            timer = new Timer();
 
             // Generation count
             generations = 0;
@@ -247,15 +255,15 @@ namespace Game_of_Life
         }
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
+
             // The universe array
             universe = new bool[xUni, yUni];
+            scratchPad = new bool[xUni, yUni];
 
             // Drawing colors
             gridColor = Color.Black;
             cellColor = Color.Gray;
 
-            // The Timer class
-            timer = new Timer();
 
             // Generation count
             generations = 0;
