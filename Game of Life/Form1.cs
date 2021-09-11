@@ -37,7 +37,7 @@ namespace Game_of_Life
             // Setup the timer
             timer.Interval = 100; // milliseconds
             timer.Tick += Timer_Tick;
-            timer.Enabled = true; // start timer running
+            timer.Enabled = false; // start timer running
         }
 
         // Calculate the next generation of cells
@@ -59,16 +59,13 @@ namespace Game_of_Life
                     if ((count < 2) || (count > 3))
                     {
                         // Cell will die and so will not be saved into scratchPad
-                        scratchPad[x, y] = !scratchPad[x, y];
+                        continue;
                     }
                     else if ((count == 2|| count == 3))
                     {
                         // Cell with live and so will be saved into scratchPad
-                        scratchPad[x, y] = scratchPad[x, y];
+                        scratchPad[x, y] = !scratchPad[x, y];
                     }
-
-                    // turn on and off scartch pad
-                    scratchPad[x, y] = !scratchPad[x, y];
                 }
             }
 
@@ -89,7 +86,6 @@ namespace Game_of_Life
         private void Timer_Tick(object sender, EventArgs e)
         {
             NextGeneration();
-                
         }
 
         private void graphicsPanel1_Paint(object sender, PaintEventArgs e)
@@ -239,34 +235,27 @@ namespace Game_of_Life
 
         private void newToolStripButton_Click(object sender, EventArgs e)
         {
-            // The universe array
+            // Reset values
             universe = new bool[xUni, yUni];
             scratchPad = new bool[xUni, yUni];
 
-            // Drawing colors
-            gridColor = Color.Black;
-            cellColor = Color.Gray;
-
             // Generation count
             generations = 0;
+
+            timer.Enabled = false;
 
             graphicsPanel1.Invalidate();
 
         }
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
-            // The universe array
+            // Reset values
             universe = new bool[xUni, yUni];
             scratchPad = new bool[xUni, yUni];
 
-            // Drawing colors
-            gridColor = Color.Black;
-            cellColor = Color.Gray;
-
-
-            // Generation count
             generations = 0;
+
+            timer.Enabled = false;
 
             graphicsPanel1.Invalidate();
         }
@@ -275,5 +264,27 @@ namespace Game_of_Life
 
         }
 
+        private void StartButton_Click(object sender, EventArgs e)
+        {
+            timer.Enabled = true;
+        }
+
+        private void PauseButton_Click(object sender, EventArgs e)
+        {
+            timer.Enabled = false;
+        }
+
+        private void Next_Click(object sender, EventArgs e)
+        {
+           if (!timer.Enabled)
+            {
+               NextGeneration();
+            }
+        }
+
+        private void NextButton_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            // Blank
+        }
     }
 }
