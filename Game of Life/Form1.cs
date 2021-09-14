@@ -13,12 +13,11 @@ namespace Game_of_Life
     public partial class Form1 : Form
     {
         // X and Y coordinates for universe
-        int xUni = 5;
+        int xUni = 6;
         int yUni = 5;
         
         // The universe array
-        bool[,] universe = new bool[5, 5];
-        bool[,] scratchPad = new bool[5, 5];
+        bool[,] universe = new bool[6, 5];
 
         // Drawing colors
         Color gridColor = Color.Black;
@@ -43,6 +42,8 @@ namespace Game_of_Life
         // Calculate the next generation of cells
         private void NextGeneration()
         {
+            bool[,] scratchPad = new bool[xUni, yUni];
+
             for (int y = 0; y < universe.GetLength(1); y++)
             {
                 for (int x = 0;  x < universe.GetLength(0); x++)
@@ -56,23 +57,26 @@ namespace Game_of_Life
                      * Dead cells with exactly 3 living neighbors, live next gen
                      */
                     
-                    if ((count < 2) || (count > 3))
+                    if (count < 2 || count > 3)
                     {
                         // Cell will die and so will not be saved into scratchPad
-                        continue;
+                        scratchPad[x,y] = !universe[x,y];
                     }
-                    else if ((count == 2|| count == 3))
+                    else if (count == 2|| count == 3)
                     {
                         // Cell with live and so will be saved into scratchPad
-                        scratchPad[x, y] = !scratchPad[x, y];
+                        scratchPad[x,y] = universe[x,y];
                     }
+                    else if (count == 3 && !scratchPad[x,y])
+                    {
+                        scratchPad[x, y] = universe[x, y];
+                    }
+                    scratchPad[x, y] = !scratchPad[x, y];
                 }
             }
 
-            // copy from scratchpad
-            bool[,] temp = universe;
+            // Copy scratchpad to universe
             universe = scratchPad;
-            scratchPad = temp;
 
             // Increment generation count
             generations++;
@@ -237,7 +241,6 @@ namespace Game_of_Life
         {
             // Reset values
             universe = new bool[xUni, yUni];
-            scratchPad = new bool[xUni, yUni];
 
             // Generation count
             generations = 0;
@@ -251,7 +254,6 @@ namespace Game_of_Life
         {
             // Reset values
             universe = new bool[xUni, yUni];
-            scratchPad = new bool[xUni, yUni];
 
             generations = 0;
 
