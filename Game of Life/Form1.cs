@@ -60,22 +60,23 @@ namespace Game_of_Life
                     if (count < 2 || count > 3)
                     {
                         // Cell will die and so will not be saved into scratchPad
-                        scratchPad[x,y] = !universe[x,y];
+                        scratchPad[x,y] = !scratchPad[x,y];
                     }
                     else if (count == 2|| count == 3)
                     {
                         // Cell with live and so will be saved into scratchPad
-                        scratchPad[x,y] = universe[x,y];
+                        scratchPad[x,y] = scratchPad[x,y];
                     }
                     else if (count == 3 && !scratchPad[x,y])
                     {
-                        scratchPad[x, y] = universe[x, y];
+                        scratchPad[x, y] = scratchPad[x, y];
                     }
+
                     scratchPad[x, y] = !scratchPad[x, y];
                 }
             }
 
-            // Copy scratchpad to universe
+            // Copy scratchpad to universe  
             universe = scratchPad;
 
             // Increment generation count
