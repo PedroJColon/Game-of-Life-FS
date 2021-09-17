@@ -12,12 +12,18 @@ namespace Game_of_Life
 {
     public partial class Form1 : Form
     {
+        // X and Y units base for Universe
+        const int xUniBase = 6;
+        const int yUniBase = 5;
+        
         // X and Y coordinates for universe
         int xUni = 6;
         int yUni = 5;
+
+
         
         // The universe array
-        bool[,] universe = new bool[6, 5];
+        bool[,] universe = new bool[xUniBase, yUniBase];
 
         // Drawing colors
         Color gridColor = Color.Black;
@@ -288,6 +294,65 @@ namespace Game_of_Life
         private void NextButton_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             // Blank
+        }
+
+        private void backColoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ColorDialog background = new ColorDialog
+            {
+                Color = graphicsPanel1.BackColor
+            };
+
+            if (DialogResult.OK == background.ShowDialog())
+            {
+                graphicsPanel1.BackColor = background.Color;
+
+                graphicsPanel1.Invalidate();
+            }
+        }
+
+        private void cellColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ColorDialog newCellColor = new ColorDialog
+            {
+                Color = cellColor
+            };
+
+            if (DialogResult.OK == newCellColor.ShowDialog())
+            {
+                cellColor = newCellColor.Color;
+
+                graphicsPanel1.Invalidate();
+            }
+        }
+
+        private void gridColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ColorDialog newGridColor = new ColorDialog
+            { 
+                Color = gridColor
+            };
+
+            if (DialogResult.OK == newGridColor.ShowDialog())
+            {
+                gridColor = newGridColor.Color;
+
+                graphicsPanel1.Invalidate();
+            }
+
+        }
+
+        private void universeSettingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CustomizeUniverse uniDialog = new CustomizeUniverse();
+
+
+            if (DialogResult.OK == uniDialog.ShowDialog())
+            {
+                timer.Interval = uniDialog.millSeconds;
+                xUni = uniDialog.universeWidth;
+                yUni = uniDialog.universeHeight;
+            }
         }
     }
 }
