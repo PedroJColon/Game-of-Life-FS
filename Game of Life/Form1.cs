@@ -12,18 +12,13 @@ namespace Game_of_Life
 {
     public partial class Form1 : Form
     {
-        // X and Y units base for Universe
+        // X and Y units starting base for Universe
         const int xUniBase = 6;
         const int yUniBase = 5;
-        
-        // X and Y coordinates for universe
-        int xUni = 6;
-        int yUni = 5;
 
-
-        
-        // The universe array
+        // Creating Universe and ScratchPad arrays to be used throughout
         bool[,] universe = new bool[xUniBase, yUniBase];
+        bool[,] scratchPad = new bool[xUniBase, yUniBase];
 
         // Drawing colors
         Color gridColor = Color.Black;
@@ -32,15 +27,35 @@ namespace Game_of_Life
         // The Timer class
         Timer timer = new Timer();
 
+        // Changable X and Y coordinates for universe
+        int xUni = Properties.Settings.Default.UniverseWidth;
+        int yUni = Properties.Settings.Default.UniverseHeight;
+
+        // Count how many cells were born
+        int cellCount = 0;
+
         // Generation count
         int generations = 0;
 
+        // Bool values to choose what kind universe it is
+        bool universeFinite = false;
+        bool universeTorodial = false;
+        
         public Form1()
         {
             InitializeComponent();
 
+            // Read Current Saved Settings to apply to created Universe and Scratchpad arrays
+            universe = new bool[xUni, yUni];
+            scratchPad = new bool[xUni, yUni];
+
+            // Read Current Saved Settings for the Form App Apperance
+            graphicsPanel1.BackColor = Properties.Settings.Default.BackgroundColor;
+            cellColor = Properties.Settings.Default.CellColor;
+            gridColor = Properties.Settings.Default.GridColor;
+
             // Setup the timer
-            timer.Interval = 100; // milliseconds
+            timer.Interval = Properties.Settings.Default.TimeInterval; // milliseconds, reads from current saved settings
             timer.Tick += Timer_Tick;
             timer.Enabled = false; // start timer running
         }
@@ -48,48 +63,63 @@ namespace Game_of_Life
         // Calculate the next generation of cells
         private void NextGeneration()
         {
-            bool[,] scratchPad = new bool[xUni, yUni];
-
             for (int y = 0; y < universe.GetLength(1); y++)
             {
                 for (int x = 0;  x < universe.GetLength(0); x++)
                 {
-                    int count = CountNeighborsFinite(x, y);
+                    int count = CountNeighborsToroidal(x, y);
 
-                    // apply rules
-                    /* If living cells are less than 2 living, die next gen
-                     * If living cells more than 3 living, die next gen
-                     * Living cells with 2 or 3 living, live next gen
-                     * Dead cells with exactly 3 living neighbors, live next gen
-                     */
-                    
+                    // If living cells are less than 2 living OR If living cells more than 3 living, die next gen, die next gen
                     if (count < 2 || count > 3)
                     {
                         // Cell will die and so will not be saved into scratchPad
-                        scratchPad[x,y] = !scratchPad[x,y];
+                        scratchPad[x,y] = !universe[x,y];
                     }
-                    else if (count == 2|| count == 3)
+                    // Living cells with 2 or 3 living, live next gen
+                    if (count == 3)
                     {
                         // Cell with live and so will be saved into scratchPad
-                        scratchPad[x,y] = scratchPad[x,y];
-                    }
-                    else if (count == 3 && !scratchPad[x,y])
-                    {
-                        scratchPad[x, y] = scratchPad[x, y];
-                    }
+                        scratchPad[x,y] = universe[x,y];
 
+                    }
+                    // Dead cells with exactly 3 living neighbors, live next gen
+                    if (count == 3 && !scratchPad[x,y])
+                    {
+                        scratchPad[x, y] = universe[x, y];
+                    }
+                    // Toggles ScratchPad on/off
                     scratchPad[x, y] = !scratchPad[x, y];
                 }
             }
 
-            // Copy scratchpad to universe  
+            // Copy scratchpad to universe
+            bool[,] temp = universe;
             universe = scratchPad;
+            scratchPad = temp;
+            GC.Collect();
+
+            for (int y = 0; y < universe.GetLength(1); y++)
+            {
+                for (int x = 0; x < universe.GetLength(0); x++)
+                {
+                    if (universe[x, y] == true)
+                    {
+                        cellCount++;
+                    }
+                    else if (universe[x, y] == false)
+                    {
+                        if (cellCount != 0)
+                            cellCount--;
+                    }
+                }
+            }
 
             // Increment generation count
             generations++;
 
-            // Update status strip generations
+            // Update status strip generations and Cell Count
             toolStripStatusLabelGenerations.Text = "Generations = " + generations.ToString();
+            toolStripStatusLabelCellCount.Text = "Cell Count = " + cellCount.ToString();
             graphicsPanel1.Invalidate();
         }
 
@@ -103,9 +133,9 @@ namespace Game_of_Life
         {
             // Calculate the width and height of each cell in pixels
             // CELL WIDTH = WINDOW WIDTH / NUMBER OF CELLS IN X
-            int cellWidth = graphicsPanel1.ClientSize.Width / universe.GetLength(0);
+            float cellWidth = ((float) graphicsPanel1.ClientSize.Width) /  ((float) universe.GetLength(0));
             // CELL HEIGHT = WINDOW HEIGHT / NUMBER OF CELLS IN Y
-            int cellHeight = graphicsPanel1.ClientSize.Height / universe.GetLength(1);
+            float cellHeight = ((float)graphicsPanel1.ClientSize.Height) / ((float)universe.GetLength(1));
 
             // A Pen for drawing the grid lines (color, width)
             Pen gridPen = new Pen(gridColor, 1);
@@ -120,25 +150,20 @@ namespace Game_of_Life
                 for (int x = 0; x < universe.GetLength(0); x++)
                 {
                     // A rectangle to represent each cell in pixels
-                    //RectangleF cellRectF = RectangleF.Empty;
-                    //cellRectF.X = x * cellWidth;
-                    //cellRectF.Y = y * cellHeight;
-                    //cellRectF.Width = cellWidth;
-                    //cellRectF.Height = cellHeight;
-                    Rectangle cellRect = Rectangle.Empty;
-                    cellRect.X =  x * cellWidth;
-                    cellRect.Y =  y * cellHeight;
-                    cellRect.Width = cellWidth;
-                    cellRect.Height = cellHeight;
+                    RectangleF cellRectF = RectangleF.Empty;
+                    cellRectF.X = x * cellWidth;
+                    cellRectF.Y = y * cellHeight;
+                    cellRectF.Width = cellWidth;
+                    cellRectF.Height = cellHeight;
 
                     // Fill the cell with a brush if alive
                     if (universe[x, y] == true)
                     {
-                        e.Graphics.FillRectangle(cellBrush, cellRect);
+                        e.Graphics.FillRectangle(cellBrush, cellRectF);
                     }
 
                     // Outline the cell with a pen
-                    e.Graphics.DrawRectangle(gridPen, cellRect.X, cellRect.Y, cellRect.Width, cellRect.Height);
+                    e.Graphics.DrawRectangle(gridPen, cellRectF.X, cellRectF.Y, cellRectF.Width, cellRectF.Height);
                 }
             }
 
@@ -153,8 +178,8 @@ namespace Game_of_Life
             if (e.Button == MouseButtons.Left)
             {
                 // Calculate the width and height of each cell in pixels
-                float cellWidth = graphicsPanel1.ClientSize.Width / universe.GetLength(0);
-                float cellHeight = graphicsPanel1.ClientSize.Height / universe.GetLength(1);
+                float cellWidth = ((float)graphicsPanel1.ClientSize.Width) / ((float)universe.GetLength(0));
+                float cellHeight = ((float)graphicsPanel1.ClientSize.Height) / ((float)universe.GetLength(1));
 
                 // Calculate the cell that was clicked in
                 // CELL X = MOUSE X / CELL WIDTH
@@ -165,6 +190,16 @@ namespace Game_of_Life
                 // Toggle the cell's state
                 universe[x, y] = !universe[x, y];
 
+                if (universe[x,y] == true)
+                {
+                    cellCount++;
+                }
+                else if (!universe[x,y])
+                {
+                    cellCount--;
+                }
+
+                toolStripStatusLabelCellCount.Text = "Cell Count = " + cellCount.ToString();
                 // Tell Windows you need to repaint
                 graphicsPanel1.Invalidate();
             }
@@ -200,7 +235,7 @@ namespace Game_of_Life
             int count = 0;
             int xLen = universe.GetLength(0);
             int yLen = universe.GetLength(1);
-            for (int yOffset = -1; yOffset <= 1; yOffset++)
+            for (int yOffset =-1; yOffset <= 1; yOffset++)
             {
                 for (int xOffset = -1; xOffset <= 1; xOffset++)
                 {
@@ -213,22 +248,22 @@ namespace Game_of_Life
                         continue;
                     }
                     // if xCheck is less than 0 then set to xLen - 1
-                    else if (xCheck < 0)
+                    if (xCheck < 0)
                     {
                         xCheck = xLen - 1;
                     }
                     // if yCheck is less than 0 then set to yLen - 1
-                    else if (yCheck < 0)
+                    if (yCheck < 0)
                     {
                         yCheck = yLen - 1;
                     }
                     // if xCheck is greater than or equal too xLen then set to 0
-                    else if (xCheck >= xLen)
+                    if (xCheck >= xLen)
                     {
                         xCheck = 0;
                     }
                     // if yCheck is greater than or equal too yLen then set to 0
-                    else if (yCheck >= yLen)
+                    if (yCheck >= yLen)
                     {
                         yCheck = 0;
                     }
@@ -239,35 +274,41 @@ namespace Game_of_Life
             return count;
         }
 
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ResetValues()
         {
-            this.Close();
+            // Reset values
+            universe = new bool[xUni, yUni];
+            scratchPad = new bool[xUni, yUni];
+            generations = 0;
+            cellCount = 0;
+            timer.Enabled = false;
+
+            // Reset Text
+            toolStripStatusLabelGenerations.Text = "Generations = " + generations;
+            toolStripStatusLabelCellCount.Text = "Cell Count = " + cellCount;
         }
 
+        // Every Click Events
         private void newToolStripButton_Click(object sender, EventArgs e)
         {
-            // Reset values
-            universe = new bool[xUni, yUni];
-
-            // Generation count
-            generations = 0;
-
-            timer.Enabled = false;
+            ResetValues();
 
             graphicsPanel1.Invalidate();
 
         }
+
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // Reset values
-            universe = new bool[xUni, yUni];
-
-            generations = 0;
-
-            timer.Enabled = false;
+            ResetValues();
 
             graphicsPanel1.Invalidate();
         }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
         private void openToolStripButton_Click(object sender, EventArgs e)
         {
 
@@ -329,7 +370,7 @@ namespace Game_of_Life
         private void gridColorToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ColorDialog newGridColor = new ColorDialog
-            { 
+            {
                 Color = gridColor
             };
 
@@ -346,13 +387,31 @@ namespace Game_of_Life
         {
             CustomizeUniverse uniDialog = new CustomizeUniverse();
 
-
             if (DialogResult.OK == uniDialog.ShowDialog())
             {
-                timer.Interval = uniDialog.millSeconds;
-                xUni = uniDialog.universeWidth;
-                yUni = uniDialog.universeHeight;
+                timer.Interval = uniDialog.MillSeconds;
+                xUni = uniDialog.UniverseWidth;
+                yUni = uniDialog.UniverseHeight;
+
+                ResetValues();
+
+                graphicsPanel1.Invalidate();
             }
+        }
+
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            // Saves current Forms appereance settings
+            Properties.Settings.Default.BackgroundColor = graphicsPanel1.BackColor;
+            Properties.Settings.Default.CellColor = cellColor;
+            Properties.Settings.Default.GridColor = gridColor;
+
+            // Saves current Universe Settings
+            Properties.Settings.Default.TimeInterval = timer.Interval;
+            Properties.Settings.Default.UniverseHeight = xUni;
+            Properties.Settings.Default.UniverseWidth = yUni;
+
+            Properties.Settings.Default.Save();
         }
     }
 }

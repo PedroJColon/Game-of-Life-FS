@@ -12,12 +12,8 @@ namespace Game_of_Life
 {
     public partial class CustomizeUniverse : Form
     {
-        public CustomizeUniverse()
-        {
-            InitializeComponent();
-        }
 
-        public int millSeconds
+        public int MillSeconds
         {
             get
             {
@@ -28,7 +24,7 @@ namespace Game_of_Life
                 MillSecondTime.Value = value;
             }
         }
-        public int universeHeight
+        public int UniverseHeight
         {
             get
             {
@@ -39,7 +35,7 @@ namespace Game_of_Life
                 HeightUniverse.Value = value;
             }
         }
-        public int universeWidth
+        public int UniverseWidth
         {
             get
             {
@@ -49,6 +45,22 @@ namespace Game_of_Life
             {
                 WidthUniverse.Value = value;
             }
+        }
+
+        public CustomizeUniverse()
+        {
+            InitializeComponent();
+
+            HeightUniverse.Value = Properties.Settings.Default.UniverseHeight;
+            WidthUniverse.Value = Properties.Settings.Default.UniverseWidth;
+            MillSecondTime.Value = Properties.Settings.Default.TimeInterval;
+        }
+
+        private void CustomizeUniverse_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Properties.Settings.Default.UniverseHeight = UniverseHeight;
+            Properties.Settings.Default.UniverseWidth = UniverseWidth;
+            Properties.Settings.Default.TimeInterval = MillSeconds;
         }
     }
 }

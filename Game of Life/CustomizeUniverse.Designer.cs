@@ -46,7 +46,7 @@ namespace Game_of_Life
             // 
             this.OkButton.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.OkButton.Location = new System.Drawing.Point(115, 197);
-            this.OkButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.OkButton.Margin = new System.Windows.Forms.Padding(2);
             this.OkButton.Name = "OkButton";
             this.OkButton.Size = new System.Drawing.Size(56, 19);
             this.OkButton.TabIndex = 0;
@@ -57,7 +57,7 @@ namespace Game_of_Life
             // 
             this.CancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.CancelButton.Location = new System.Drawing.Point(214, 197);
-            this.CancelButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.CancelButton.Margin = new System.Windows.Forms.Padding(2);
             this.CancelButton.Name = "CancelButton";
             this.CancelButton.Size = new System.Drawing.Size(56, 19);
             this.CancelButton.TabIndex = 1;
@@ -67,23 +67,48 @@ namespace Game_of_Life
             // HeightUniverse
             // 
             this.HeightUniverse.Location = new System.Drawing.Point(214, 44);
-            this.HeightUniverse.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.HeightUniverse.Margin = new System.Windows.Forms.Padding(2);
+            this.HeightUniverse.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.HeightUniverse.Name = "HeightUniverse";
             this.HeightUniverse.Size = new System.Drawing.Size(90, 20);
             this.HeightUniverse.TabIndex = 2;
+            this.HeightUniverse.Value = new decimal(new int[] {
+            6,
+            0,
+            0,
+            0});
             // 
             // WidthUniverse
             // 
             this.WidthUniverse.Location = new System.Drawing.Point(214, 81);
-            this.WidthUniverse.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.WidthUniverse.Margin = new System.Windows.Forms.Padding(2);
+            this.WidthUniverse.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.WidthUniverse.Name = "WidthUniverse";
             this.WidthUniverse.Size = new System.Drawing.Size(90, 20);
             this.WidthUniverse.TabIndex = 3;
+            this.WidthUniverse.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
             // 
             // MillSecondTime
             // 
             this.MillSecondTime.Location = new System.Drawing.Point(214, 119);
-            this.MillSecondTime.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.MillSecondTime.Margin = new System.Windows.Forms.Padding(2);
+            this.MillSecondTime.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.MillSecondTime.Name = "MillSecondTime";
             this.MillSecondTime.Size = new System.Drawing.Size(90, 20);
             this.MillSecondTime.TabIndex = 4;
@@ -138,12 +163,13 @@ namespace Game_of_Life
             this.Controls.Add(this.CancelButton);
             this.Controls.Add(this.OkButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "CustomizeUniverse";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Customize Universe";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.CustomizeUniverse_FormClosed);
             ((System.ComponentModel.ISupportInitialize)(this.HeightUniverse)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.WidthUniverse)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.MillSecondTime)).EndInit();
