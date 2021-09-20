@@ -31,16 +31,15 @@ namespace Game_of_Life
         int xUni = Properties.Settings.Default.UniverseWidth;
         int yUni = Properties.Settings.Default.UniverseHeight;
 
+        // Bool values to choose what kind universe it is
+        bool infiniteUniverse = Properties.Settings.Default.UniverseType;
+
         // Count how many cells were born
         int cellCount = 0;
 
         // Generation count
         int generations = 0;
 
-        // Bool values to choose what kind universe it is
-        bool universeFinite = false;
-        bool universeTorodial = false;
-        
         public Form1()
         {
             InitializeComponent();
@@ -53,9 +52,12 @@ namespace Game_of_Life
             graphicsPanel1.BackColor = Properties.Settings.Default.BackgroundColor;
             cellColor = Properties.Settings.Default.CellColor;
             gridColor = Properties.Settings.Default.GridColor;
+            toroidalUniverseToolStripMenuItem.Checked = infiniteUniverse;
+            finiteUniverseToolStripMenuItem.Checked = !infiniteUniverse;
 
             // Setup the timer
             timer.Interval = Properties.Settings.Default.TimeInterval; // milliseconds, reads from current saved settings
+            TimerIntervalStatus.Text = "Timer Interval = " + timer.Interval;
             timer.Tick += Timer_Tick;
             timer.Enabled = false; // start timer running
         }
@@ -63,32 +65,86 @@ namespace Game_of_Life
         // Calculate the next generation of cells
         private void NextGeneration()
         {
-            for (int y = 0; y < universe.GetLength(1); y++)
+            if (infiniteUniverse)
             {
-                for (int x = 0;  x < universe.GetLength(0); x++)
+                for (int y = 0; y < universe.GetLength(1); y++)
                 {
-                    int count = CountNeighborsToroidal(x, y);
+                    for (int x = 0; x < universe.GetLength(0); x++)
+                    {
+                        int count = CountNeighborsToroidal(x, y);
 
-                    // If living cells are less than 2 living OR If living cells more than 3 living, die next gen, die next gen
-                    if (count < 2 || count > 3)
-                    {
-                        // Cell will die and so will not be saved into scratchPad
-                        scratchPad[x,y] = !universe[x,y];
-                    }
-                    // Living cells with 2 or 3 living, live next gen
-                    if (count == 3)
-                    {
-                        // Cell with live and so will be saved into scratchPad
-                        scratchPad[x,y] = universe[x,y];
+                        // If living cells are less than 2 living OR If living cells more than 3 living, die next gen, die next gen
+                        if (count < 2 || count > 3)
+                        {
+                            // Cell will die and so will not be saved into scratchPad
+                            scratchPad[x, y] = !universe[x, y];
+                        }
+                        // Living cells with 2 or 3 living, live next gen
+                        if (count == 3)
+                        {
+                            // Cell with live and so will be saved into scratchPad
+                            scratchPad[x, y] = universe[x, y];
 
+                        }
+                        // Dead cells with exactly 3 living neighbors, live next gen
+                        if (count == 3 && !scratchPad[x, y])
+                        {
+                            scratchPad[x, y] = universe[x, y];
+                        }
+                        // Toggles ScratchPad on/off
+                        scratchPad[x, y] = !scratchPad[x, y];
+
+                        if (universe[x, y] == true)
+                        {
+                            cellCount++;
+                        }
+                        else if (universe[x, y] == false)
+                        {
+                            if (cellCount != 0)
+                                cellCount--;
+                        }
                     }
-                    // Dead cells with exactly 3 living neighbors, live next gen
-                    if (count == 3 && !scratchPad[x,y])
+                }
+            }
+            else
+            {
+                for (int y = 0; y < universe.GetLength(1); y++)
+                {
+                    for (int x = 0; x < universe.GetLength(0); x++)
                     {
-                        scratchPad[x, y] = universe[x, y];
+                        int count = CountNeighborsFinite(x, y);
+
+                        // If living cells are less than 2 living OR If living cells more than 3 living, die next gen, die next gen
+                        if (count < 2 || count > 3)
+                        {
+                            // Cell will die and so will not be saved into scratchPad
+                            scratchPad[x, y] = !universe[x, y];
+                        }
+                        // Living cells with 2 or 3 living, live next gen
+                        if (count == 3)
+                        {
+                            // Cell with live and so will be saved into scratchPad
+                            scratchPad[x, y] = universe[x, y];
+
+                        }
+                        // Dead cells with exactly 3 living neighbors, live next gen
+                        if (count == 3 && !scratchPad[x, y])
+                        {
+                            scratchPad[x, y] = universe[x, y];
+                        }
+                        // Toggles ScratchPad on/off
+                        scratchPad[x, y] = !scratchPad[x, y];
+
+                        if (universe[x, y] == true)
+                        {
+                            cellCount++;
+                        }
+                        else if (universe[x, y] == false)
+                        {
+                            if (cellCount != 0)
+                                cellCount--;
+                        }
                     }
-                    // Toggles ScratchPad on/off
-                    scratchPad[x, y] = !scratchPad[x, y];
                 }
             }
 
@@ -96,23 +152,6 @@ namespace Game_of_Life
             bool[,] temp = universe;
             universe = scratchPad;
             scratchPad = temp;
-            GC.Collect();
-
-            for (int y = 0; y < universe.GetLength(1); y++)
-            {
-                for (int x = 0; x < universe.GetLength(0); x++)
-                {
-                    if (universe[x, y] == true)
-                    {
-                        cellCount++;
-                    }
-                    else if (universe[x, y] == false)
-                    {
-                        if (cellCount != 0)
-                            cellCount--;
-                    }
-                }
-            }
 
             // Increment generation count
             generations++;
@@ -286,6 +325,68 @@ namespace Game_of_Life
             // Reset Text
             toolStripStatusLabelGenerations.Text = "Generations = " + generations;
             toolStripStatusLabelCellCount.Text = "Cell Count = " + cellCount;
+            TimerIntervalStatus.Text = "Timer Interval = " + timer.Interval;
+        }
+
+        private void UniverseSettings()
+        {
+            CustomizeUniverse uniDialog = new CustomizeUniverse();
+
+            if (DialogResult.OK == uniDialog.ShowDialog())
+            {
+                timer.Interval = uniDialog.MillSeconds;
+                xUni = uniDialog.UniverseWidth;
+                yUni = uniDialog.UniverseHeight;
+
+                ResetValues();
+
+                graphicsPanel1.Invalidate();
+            }
+        }
+
+        private void BackgroundColorSettings()
+        {
+            ColorDialog background = new ColorDialog
+            {
+                Color = graphicsPanel1.BackColor
+            };
+
+            if (DialogResult.OK == background.ShowDialog())
+            {
+                graphicsPanel1.BackColor = background.Color;
+
+                graphicsPanel1.Invalidate();
+            }
+        }
+
+        private void CellColorSettings()
+        {
+            ColorDialog newCellColor = new ColorDialog
+            {
+                Color = cellColor
+            };
+
+            if (DialogResult.OK == newCellColor.ShowDialog())
+            {
+                cellColor = newCellColor.Color;
+
+                graphicsPanel1.Invalidate();
+            }
+        }
+
+        private void GridColorSettings()
+        {
+            ColorDialog newGridColor = new ColorDialog
+            {
+                Color = gridColor
+            };
+
+            if (DialogResult.OK == newGridColor.ShowDialog())
+            {
+                gridColor = newGridColor.Color;
+
+                graphicsPanel1.Invalidate();
+            }
         }
 
         // Every Click Events
@@ -294,7 +395,6 @@ namespace Game_of_Life
             ResetValues();
 
             graphicsPanel1.Invalidate();
-
         }
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
@@ -339,66 +439,107 @@ namespace Game_of_Life
 
         private void backColoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ColorDialog background = new ColorDialog
-            {
-                Color = graphicsPanel1.BackColor
-            };
-
-            if (DialogResult.OK == background.ShowDialog())
-            {
-                graphicsPanel1.BackColor = background.Color;
-
-                graphicsPanel1.Invalidate();
-            }
+            BackgroundColorSettings();
         }
 
         private void cellColorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ColorDialog newCellColor = new ColorDialog
-            {
-                Color = cellColor
-            };
-
-            if (DialogResult.OK == newCellColor.ShowDialog())
-            {
-                cellColor = newCellColor.Color;
-
-                graphicsPanel1.Invalidate();
-            }
+            CellColorSettings();
         }
 
         private void gridColorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ColorDialog newGridColor = new ColorDialog
-            {
-                Color = gridColor
-            };
-
-            if (DialogResult.OK == newGridColor.ShowDialog())
-            {
-                gridColor = newGridColor.Color;
-
-                graphicsPanel1.Invalidate();
-            }
-
+            GridColorSettings();
         }
 
         private void universeSettingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            CustomizeUniverse uniDialog = new CustomizeUniverse();
-
-            if (DialogResult.OK == uniDialog.ShowDialog())
-            {
-                timer.Interval = uniDialog.MillSeconds;
-                xUni = uniDialog.UniverseWidth;
-                yUni = uniDialog.UniverseHeight;
-
-                ResetValues();
-
-                graphicsPanel1.Invalidate();
-            }
+            UniverseSettings();
         }
 
+        private void finiteUniverseToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (infiniteUniverse == true)
+            {
+                toroidalUniverseToolStripMenuItem.Checked = false;
+            }
+            infiniteUniverse = false;
+            finiteUniverseToolStripMenuItem.Checked = true;
+        }
+
+        private void toroidalUniverseToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (infiniteUniverse == false)
+            {
+                finiteUniverseToolStripMenuItem.Checked = false;
+            }
+            infiniteUniverse = true;
+            toroidalUniverseToolStripMenuItem.Checked = true;
+        }
+
+        private void resetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.Reset();
+
+            // Revert Universe Settings to original base values
+            xUni = Properties.Settings.Default.UniverseWidth;
+            yUni = Properties.Settings.Default.UniverseHeight;
+            infiniteUniverse = Properties.Settings.Default.UniverseType;
+            timer.Interval = Properties.Settings.Default.TimeInterval;
+            toroidalUniverseToolStripMenuItem.Checked = infiniteUniverse;
+            finiteUniverseToolStripMenuItem.Checked = !infiniteUniverse;
+            ResetValues();
+
+            // Revert colors of Form to original base values
+            graphicsPanel1.BackColor = Properties.Settings.Default.BackgroundColor;
+            cellColor = Properties.Settings.Default.CellColor;
+            gridColor = Properties.Settings.Default.GridColor;
+
+            graphicsPanel1.Invalidate();
+        }
+
+        private void reloadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.Reload();
+
+            // Revert Universe Settings to last saved settings
+            xUni = Properties.Settings.Default.UniverseWidth;
+            yUni = Properties.Settings.Default.UniverseHeight;
+            infiniteUniverse = Properties.Settings.Default.UniverseType;
+            timer.Interval = Properties.Settings.Default.TimeInterval;
+            toroidalUniverseToolStripMenuItem.Checked = infiniteUniverse;
+            finiteUniverseToolStripMenuItem.Checked = !infiniteUniverse;
+            ResetValues();
+
+            // Revert colors of Form to last saved settings
+            graphicsPanel1.BackColor = Properties.Settings.Default.BackgroundColor;
+            cellColor = Properties.Settings.Default.CellColor;
+            gridColor = Properties.Settings.Default.GridColor;
+
+            graphicsPanel1.Invalidate();
+        }
+
+        private void universeSettingsToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            UniverseSettings();
+        }
+
+        private void backColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            BackgroundColorSettings();
+        }
+
+        private void cellColorToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            CellColorSettings();
+        }
+
+        private void gridColorToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            GridColorSettings();
+        }
+
+        // When Form is closed
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
             // Saves current Forms appereance settings
@@ -407,11 +548,14 @@ namespace Game_of_Life
             Properties.Settings.Default.GridColor = gridColor;
 
             // Saves current Universe Settings
-            Properties.Settings.Default.TimeInterval = timer.Interval;
             Properties.Settings.Default.UniverseHeight = xUni;
             Properties.Settings.Default.UniverseWidth = yUni;
+            Properties.Settings.Default.TimeInterval = timer.Interval;
+            Properties.Settings.Default.UniverseType = infiniteUniverse;
 
             Properties.Settings.Default.Save();
         }
+
+
     }
 }
