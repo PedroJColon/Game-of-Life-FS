@@ -122,6 +122,13 @@ namespace Game_of_Life
             // A Brush for filling living cells interiors (color)
             Brush cellBrush = new SolidBrush(cellColor);
 
+            Font font = new Font("Times New Roman", 16f);
+            StringFormat stringFormat = new StringFormat
+            {
+                Alignment = StringAlignment.Center,
+                LineAlignment = StringAlignment.Center
+            };
+
             // Iterate through the universe in the y, top to bottom
             for (int y = 0; y < universe.GetLength(1); y++)
             {
@@ -139,6 +146,25 @@ namespace Game_of_Life
                     if (universe[x, y] == true)
                     {
                         e.Graphics.FillRectangle(cellBrush, cellRectF);
+                    }
+
+                    int neighbors;
+                    if (infiniteUniverse)
+                    {
+                        neighbors = CountNeighborsToroidal(x, y);
+                    }
+                    else
+                    {
+                        neighbors = CountNeighborsFinite(x, y);
+                    }
+
+                    if (neighbors < 2 || neighbors > 3)
+                    {
+                        e.Graphics.DrawString(neighbors.ToString(), font, Brushes.Red, cellRectF, stringFormat);
+                    }
+                    else
+                    {
+                        e.Graphics.DrawString(neighbors.ToString(), font, Brushes.Green, cellRectF, stringFormat);
                     }
 
                     // Outline the cell with a pen
