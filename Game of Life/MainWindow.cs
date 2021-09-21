@@ -191,7 +191,7 @@ namespace Game_of_Life
             // Display HUD
             if (isHUDVisible)
             {
-                e.Graphics.DrawString("Heads Up Display!", font, Brushes.Black, 100, 50, stringFormat);
+                e.Graphics.DrawString("Heads Up Display \n Blah blah", font, Brushes.Black, 100, 50, stringFormat);
             }
 
             // Cleaning up pens and brushes
@@ -623,6 +623,26 @@ namespace Game_of_Life
             graphicsPanel1.Invalidate();
         }
 
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFile();
+            graphicsPanel1.Invalidate();
+        }
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveCurrentFile();
+        }
+
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveCurrentFile();
+        }
+
+        private void saveToolStripButton_Click(object sender, EventArgs e)
+        {
+            SaveCurrentFile();
+        }
+
         private void StartButton_Click(object sender, EventArgs e)
         {
             timer.Enabled = true;
@@ -674,6 +694,20 @@ namespace Game_of_Life
         private void viewGridToolStripMenuItem_Click(object sender, EventArgs e)
         {
             viewGridSettings();
+        }
+
+        private void fromTimeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            isTimeSeed = true;
+            RandomUniverse();
+            graphicsPanel1.Invalidate();
+        }
+
+        private void fromSeedToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            isTimeSeed = false;
+            RandomUniverse();
+            graphicsPanel1.Invalidate();
         }
 
         private void universeSettingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -798,41 +832,6 @@ namespace Game_of_Life
             Properties.Settings.Default.GridVisible = isGridVisible;
 
             Properties.Settings.Default.Save();
-        }
-
-        private void fromTimeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            isTimeSeed = true;
-            RandomUniverse();
-            graphicsPanel1.Invalidate();
-        }
-
-        private void fromSeedToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            isTimeSeed = false;
-            RandomUniverse();
-            graphicsPanel1.Invalidate();
-        }
-
-        private void saveToolStripButton_Click(object sender, EventArgs e)
-        {
-            SaveCurrentFile();
-        }
-
-        private void openToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            OpenFile();
-            graphicsPanel1.Invalidate();
-        }
-
-        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            SaveCurrentFile();
-        }
-
-        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            SaveCurrentFile();
         }
     }
 }
