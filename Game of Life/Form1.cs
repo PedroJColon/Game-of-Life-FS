@@ -33,6 +33,9 @@ namespace Game_of_Life
 
         // Bool values to choose what kind universe it is
         bool infiniteUniverse = Properties.Settings.Default.UniverseType;
+        bool isHUDVisible = true;
+        bool isNeighborCountVisible = true;
+        bool isGridVisible = true;
 
         // Count how many cells were born
         int cellCount = 0;
@@ -65,85 +68,21 @@ namespace Game_of_Life
         // Calculate the next generation of cells
         private void NextGeneration()
         {
-            if (infiniteUniverse)
+            for (int y = 0; y < universe.GetLength(1); y++)
             {
-                for (int y = 0; y < universe.GetLength(1); y++)
+                for (int x = 0; x < universe.GetLength(0); x++)
                 {
-                    for (int x = 0; x < universe.GetLength(0); x++)
+                    if (infiniteUniverse)
                     {
                         int count = CountNeighborsToroidal(x, y);
 
-                        // If living cells are less than 2 living OR If living cells more than 3 living, die next gen, die next gen
-                        if (count < 2 || count > 3)
-                        {
-                            // Cell will die and so will not be saved into scratchPad
-                            scratchPad[x, y] = !universe[x, y];
-                        }
-                        // Living cells with 2 or 3 living, live next gen
-                        if (count == 3)
-                        {
-                            // Cell with live and so will be saved into scratchPad
-                            scratchPad[x, y] = universe[x, y];
-
-                        }
-                        // Dead cells with exactly 3 living neighbors, live next gen
-                        if (count == 3 && !scratchPad[x, y])
-                        {
-                            scratchPad[x, y] = universe[x, y];
-                        }
-                        // Toggles ScratchPad on/off
-                        scratchPad[x, y] = !scratchPad[x, y];
-
-                        if (universe[x, y] == true)
-                        {
-                            cellCount++;
-                        }
-                        else if (universe[x, y] == false)
-                        {
-                            if (cellCount != 0)
-                                cellCount--;
-                        }
+                        DetermineCellState(x, y, count);
                     }
-                }
-            }
-            else
-            {
-                for (int y = 0; y < universe.GetLength(1); y++)
-                {
-                    for (int x = 0; x < universe.GetLength(0); x++)
+                    else
                     {
                         int count = CountNeighborsFinite(x, y);
 
-                        // If living cells are less than 2 living OR If living cells more than 3 living, die next gen, die next gen
-                        if (count < 2 || count > 3)
-                        {
-                            // Cell will die and so will not be saved into scratchPad
-                            scratchPad[x, y] = !universe[x, y];
-                        }
-                        // Living cells with 2 or 3 living, live next gen
-                        if (count == 3)
-                        {
-                            // Cell with live and so will be saved into scratchPad
-                            scratchPad[x, y] = universe[x, y];
-
-                        }
-                        // Dead cells with exactly 3 living neighbors, live next gen
-                        if (count == 3 && !scratchPad[x, y])
-                        {
-                            scratchPad[x, y] = universe[x, y];
-                        }
-                        // Toggles ScratchPad on/off
-                        scratchPad[x, y] = !scratchPad[x, y];
-
-                        if (universe[x, y] == true)
-                        {
-                            cellCount++;
-                        }
-                        else if (universe[x, y] == false)
-                        {
-                            if (cellCount != 0)
-                                cellCount--;
-                        }
+                        DetermineCellState(x, y, count);
                     }
                 }
             }
@@ -152,6 +91,7 @@ namespace Game_of_Life
             bool[,] temp = universe;
             universe = scratchPad;
             scratchPad = temp;
+            scratchPad = new bool[xUni, yUni];
 
             // Increment generation count
             generations++;
@@ -311,6 +251,29 @@ namespace Game_of_Life
                 }
             }
             return count;
+        }
+
+        private void DetermineCellState(int x, int y, int countNeighbor)
+        {
+            bool isAliveState = universe[x, y];
+            
+            // Living cells with 2 or 3 living, live next gen
+            // Dead cells with exactly 3 living neighbors, live next gen
+            if ((countNeighbor == 3 && isAliveState) || (countNeighbor == 2 && isAliveState) || (countNeighbor == 3 && !universe[x, y]))
+            {
+                // Cell with live and so will be saved into scratchPad
+                scratchPad[x, y] = true;
+                cellCount++;
+            }
+            // If living cells are less than 2 living OR If living cells more than 3 living, die next gen, die next gen
+            else
+            {
+                // Cell will die and so will not be saved into scratchPad
+                scratchPad[x, y] = false;
+                if (cellCount != 0)
+                    cellCount--;
+
+            }
         }
 
         private void ResetValues()
