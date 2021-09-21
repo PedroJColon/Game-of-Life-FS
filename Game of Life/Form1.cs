@@ -148,29 +148,41 @@ namespace Game_of_Life
                         e.Graphics.FillRectangle(cellBrush, cellRectF);
                     }
 
-                    int neighbors;
-                    if (infiniteUniverse)
+                    if (isNeighborCountVisible)
                     {
-                        neighbors = CountNeighborsToroidal(x, y);
-                    }
-                    else
-                    {
-                        neighbors = CountNeighborsFinite(x, y);
-                    }
+                        int neighbors;
+                        if (infiniteUniverse)
+                        {
+                            neighbors = CountNeighborsToroidal(x, y);
+                        }
+                        else
+                        {
+                            neighbors = CountNeighborsFinite(x, y);
+                        }
 
-                    if (neighbors < 2 || neighbors > 3)
-                    {
-                        e.Graphics.DrawString(neighbors.ToString(), font, Brushes.Red, cellRectF, stringFormat);
-                    }
-                    else
-                    {
-                        e.Graphics.DrawString(neighbors.ToString(), font, Brushes.Green, cellRectF, stringFormat);
+                        if (neighbors < 2 || neighbors > 3)
+                        {
+                            e.Graphics.DrawString(neighbors.ToString(), font, Brushes.Red, cellRectF, stringFormat);
+                        }
+                        else
+                        {
+                            e.Graphics.DrawString(neighbors.ToString(), font, Brushes.Green, cellRectF, stringFormat);
+                        }
                     }
 
                     // Outline the cell with a pen
-                    e.Graphics.DrawRectangle(gridPen, cellRectF.X, cellRectF.Y, cellRectF.Width, cellRectF.Height);
+                    if (isGridVisible)
+                    {
+                        e.Graphics.DrawRectangle(gridPen, cellRectF.X, cellRectF.Y, cellRectF.Width, cellRectF.Height);
+                    }
                 }
             }
+
+            if (isHUDVisible)
+            {
+                e.Graphics.DrawString("Heads Up Display!", font, Brushes.Black, 100, 50, stringFormat);
+            }
+
 
             // Cleaning up pens and brushes
             gridPen.Dispose();
