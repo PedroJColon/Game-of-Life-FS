@@ -33,9 +33,9 @@ namespace Game_of_Life
 
         // Bool values to choose what kind universe it is
         bool infiniteUniverse = Properties.Settings.Default.UniverseType;
-        bool isHUDVisible = true;
-        bool isNeighborCountVisible = true;
-        bool isGridVisible = true;
+        bool isHUDVisible = Properties.Settings.Default.HUDVisible;
+        bool isNeighborCountVisible = Properties.Settings.Default.NeighborCountVisible;
+        bool isGridVisible = Properties.Settings.Default.GridVisible;
 
         // Count how many cells were born
         int cellCount = 0;
@@ -55,8 +55,16 @@ namespace Game_of_Life
             graphicsPanel1.BackColor = Properties.Settings.Default.BackgroundColor;
             cellColor = Properties.Settings.Default.CellColor;
             gridColor = Properties.Settings.Default.GridColor;
+
+            // Checks to see if a menu item should be checked or not, based on last saved form
             toroidalUniverseToolStripMenuItem.Checked = infiniteUniverse;
             finiteUniverseToolStripMenuItem.Checked = !infiniteUniverse;
+            viewHUDHeadsUpDisplayToolStripMenuItem.Checked = isHUDVisible;
+            viewHUDHeadsUpDisplayToolStripMenuItem1.Checked = isHUDVisible;
+            viewNeighborCountToolStripMenuItem.Checked = isNeighborCountVisible;
+            viewNeighborCountToolStripMenuItem1.Checked = isNeighborCountVisible;
+            viewGridToolStripMenuItem.Checked = isGridVisible;
+            viewGridToolStripMenuItem1.Checked = isGridVisible;
 
             // Setup the timer
             timer.Interval = Properties.Settings.Default.TimeInterval; // milliseconds, reads from current saved settings
@@ -148,6 +156,7 @@ namespace Game_of_Life
                         e.Graphics.FillRectangle(cellBrush, cellRectF);
                     }
 
+                    // Show the count within the cell block
                     if (isNeighborCountVisible)
                     {
                         int neighbors;
@@ -178,11 +187,11 @@ namespace Game_of_Life
                 }
             }
 
+            // Display HUD
             if (isHUDVisible)
             {
                 e.Graphics.DrawString("Heads Up Display!", font, Brushes.Black, 100, 50, stringFormat);
             }
-
 
             // Cleaning up pens and brushes
             gridPen.Dispose();
@@ -222,6 +231,7 @@ namespace Game_of_Life
             }
         }
 
+        // Count Neighbors Functions
         private int CountNeighborsFinite(int x, int y)
         {
             int count = 0;
@@ -291,6 +301,7 @@ namespace Game_of_Life
             return count;
         }
 
+        // Reuseable Functions
         private void DetermineCellState(int x, int y, int countNeighbor)
         {
             bool isAliveState = universe[x, y];
@@ -314,6 +325,11 @@ namespace Game_of_Life
             }
         }
 
+        private int Randomize()
+        {
+            return 5;
+        }
+
         private void ResetValues()
         {
             // Reset values
@@ -333,14 +349,23 @@ namespace Game_of_Life
         {
             CustomizeUniverse uniDialog = new CustomizeUniverse();
 
+            int previousUniverseWidth = xUni;
+            int previousUniverseHeight = yUni;
+
             if (DialogResult.OK == uniDialog.ShowDialog())
             {
                 timer.Interval = uniDialog.MillSeconds;
-                xUni = uniDialog.UniverseWidth;
-                yUni = uniDialog.UniverseHeight;
+                bool didWidthChange = previousUniverseWidth != uniDialog.UniverseWidth;
+                bool didHeightChange = previousUniverseHeight != uniDialog.UniverseHeight;
 
-                ResetValues();
+                if (didWidthChange || didHeightChange)
+                {
+                    xUni = uniDialog.UniverseWidth;
+                    yUni = uniDialog.UniverseHeight;
+                    ResetValues();
+                }
 
+                TimerIntervalStatus.Text = "Timer Interval = " + timer.Interval;
                 graphicsPanel1.Invalidate();
             }
         }
@@ -388,6 +413,30 @@ namespace Game_of_Life
 
                 graphicsPanel1.Invalidate();
             }
+        }
+
+        private void ViewHUDSettings()
+        {
+            isHUDVisible = !isHUDVisible;
+            viewHUDHeadsUpDisplayToolStripMenuItem.Checked = isHUDVisible;
+            viewHUDHeadsUpDisplayToolStripMenuItem1.Checked = isHUDVisible;
+            graphicsPanel1.Invalidate();
+        }
+        
+        private void ViewNeighborCountSettings()
+        {
+            isNeighborCountVisible = !isNeighborCountVisible;
+            viewNeighborCountToolStripMenuItem.Checked = isNeighborCountVisible;
+            viewNeighborCountToolStripMenuItem1.Checked = isNeighborCountVisible;
+            graphicsPanel1.Invalidate();
+        }
+
+        private void viewGridSettings()
+        {
+            isGridVisible = !isGridVisible;
+            viewGridToolStripMenuItem.Checked = isGridVisible;
+            viewGridToolStripMenuItem1.Checked = isGridVisible;
+            graphicsPanel1.Invalidate();
         }
 
         // Every Click Events
@@ -451,6 +500,21 @@ namespace Game_of_Life
         private void gridColorToolStripMenuItem_Click(object sender, EventArgs e)
         {
             GridColorSettings();
+        }
+
+        private void viewHUDHeadsUpDisplayToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ViewHUDSettings();
+        }
+
+        private void viewNeighborCountToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ViewNeighborCountSettings();
+        }
+
+        private void viewGridToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            viewGridSettings();
         }
 
         private void universeSettingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -520,6 +584,7 @@ namespace Game_of_Life
             graphicsPanel1.Invalidate();
         }
 
+        // Context Menu Click Events
         private void universeSettingsToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             UniverseSettings();
@@ -540,6 +605,21 @@ namespace Game_of_Life
             GridColorSettings();
         }
 
+        private void viewHUDHeadsUpDisplayToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            ViewHUDSettings();
+        }
+
+        private void viewNeighborCountToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            ViewNeighborCountSettings();
+        }
+
+        private void viewGridToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            viewGridSettings();
+        }
+
         // When Form is closed
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
@@ -554,9 +634,11 @@ namespace Game_of_Life
             Properties.Settings.Default.TimeInterval = timer.Interval;
             Properties.Settings.Default.UniverseType = infiniteUniverse;
 
+            Properties.Settings.Default.HUDVisible = isHUDVisible;
+            Properties.Settings.Default.NeighborCountVisible = isNeighborCountVisible;
+            Properties.Settings.Default.GridVisible = isGridVisible;
+
             Properties.Settings.Default.Save();
         }
-
-
     }
 }

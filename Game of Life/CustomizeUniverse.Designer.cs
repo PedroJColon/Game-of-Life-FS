@@ -45,10 +45,10 @@ namespace Game_of_Life
             // OkButton
             // 
             this.OkButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.OkButton.Location = new System.Drawing.Point(115, 197);
-            this.OkButton.Margin = new System.Windows.Forms.Padding(2);
+            this.OkButton.Location = new System.Drawing.Point(153, 242);
+            this.OkButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.OkButton.Name = "OkButton";
-            this.OkButton.Size = new System.Drawing.Size(56, 19);
+            this.OkButton.Size = new System.Drawing.Size(75, 23);
             this.OkButton.TabIndex = 0;
             this.OkButton.Text = "OK";
             this.OkButton.UseVisualStyleBackColor = true;
@@ -56,25 +56,25 @@ namespace Game_of_Life
             // CancelButton
             // 
             this.CancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.CancelButton.Location = new System.Drawing.Point(214, 197);
-            this.CancelButton.Margin = new System.Windows.Forms.Padding(2);
+            this.CancelButton.Location = new System.Drawing.Point(285, 242);
+            this.CancelButton.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.CancelButton.Name = "CancelButton";
-            this.CancelButton.Size = new System.Drawing.Size(56, 19);
+            this.CancelButton.Size = new System.Drawing.Size(75, 23);
             this.CancelButton.TabIndex = 1;
             this.CancelButton.Text = "Cancel";
             this.CancelButton.UseVisualStyleBackColor = true;
             // 
             // HeightUniverse
             // 
-            this.HeightUniverse.Location = new System.Drawing.Point(214, 44);
-            this.HeightUniverse.Margin = new System.Windows.Forms.Padding(2);
+            this.HeightUniverse.Location = new System.Drawing.Point(285, 54);
+            this.HeightUniverse.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.HeightUniverse.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
             this.HeightUniverse.Name = "HeightUniverse";
-            this.HeightUniverse.Size = new System.Drawing.Size(90, 20);
+            this.HeightUniverse.Size = new System.Drawing.Size(120, 22);
             this.HeightUniverse.TabIndex = 2;
             this.HeightUniverse.Value = new decimal(new int[] {
             6,
@@ -84,15 +84,15 @@ namespace Game_of_Life
             // 
             // WidthUniverse
             // 
-            this.WidthUniverse.Location = new System.Drawing.Point(214, 81);
-            this.WidthUniverse.Margin = new System.Windows.Forms.Padding(2);
+            this.WidthUniverse.Location = new System.Drawing.Point(285, 100);
+            this.WidthUniverse.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.WidthUniverse.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
             this.WidthUniverse.Name = "WidthUniverse";
-            this.WidthUniverse.Size = new System.Drawing.Size(90, 20);
+            this.WidthUniverse.Size = new System.Drawing.Size(120, 22);
             this.WidthUniverse.TabIndex = 3;
             this.WidthUniverse.Value = new decimal(new int[] {
             5,
@@ -102,15 +102,20 @@ namespace Game_of_Life
             // 
             // MillSecondTime
             // 
-            this.MillSecondTime.Location = new System.Drawing.Point(214, 119);
-            this.MillSecondTime.Margin = new System.Windows.Forms.Padding(2);
+            this.MillSecondTime.Location = new System.Drawing.Point(285, 146);
+            this.MillSecondTime.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.MillSecondTime.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
             this.MillSecondTime.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
             this.MillSecondTime.Name = "MillSecondTime";
-            this.MillSecondTime.Size = new System.Drawing.Size(90, 20);
+            this.MillSecondTime.Size = new System.Drawing.Size(120, 22);
             this.MillSecondTime.TabIndex = 4;
             this.MillSecondTime.Value = new decimal(new int[] {
             100,
@@ -121,39 +126,36 @@ namespace Game_of_Life
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(70, 46);
-            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label1.Location = new System.Drawing.Point(93, 57);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(138, 13);
+            this.label1.Size = new System.Drawing.Size(182, 17);
             this.label1.TabIndex = 5;
             this.label1.Text = "Change Height of Universe:";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(70, 83);
-            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label2.Location = new System.Drawing.Point(93, 102);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(135, 13);
+            this.label2.Size = new System.Drawing.Size(177, 17);
             this.label2.TabIndex = 6;
             this.label2.Text = "Change Width of Universe:";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(24, 120);
-            this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label3.Location = new System.Drawing.Point(32, 148);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(183, 13);
+            this.label3.Size = new System.Drawing.Size(242, 17);
             this.label3.TabIndex = 7;
             this.label3.Text = "Change Millsecond Time of Universe:";
             // 
             // CustomizeUniverse
             // 
             this.AcceptButton = this.OkButton;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(411, 226);
+            this.ClientSize = new System.Drawing.Size(548, 278);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -163,7 +165,7 @@ namespace Game_of_Life
             this.Controls.Add(this.CancelButton);
             this.Controls.Add(this.OkButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.Margin = new System.Windows.Forms.Padding(2);
+            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "CustomizeUniverse";
