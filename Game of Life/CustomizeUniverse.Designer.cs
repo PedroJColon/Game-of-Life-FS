@@ -183,7 +183,7 @@ namespace Game_of_Life
         #endregion
 
         private System.Windows.Forms.Button OkButton;
-        private System.Windows.Forms.Button CancelButton;
+        private new System.Windows.Forms.Button CancelButton;
         private System.Windows.Forms.NumericUpDown HeightUniverse;
         private System.Windows.Forms.NumericUpDown WidthUniverse;
         private System.Windows.Forms.NumericUpDown MillSecondTime;

@@ -142,5 +142,17 @@ namespace Game_of_Life.Properties {
                 this["GridVisible"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("50")]
+        public int SeedRandomValue {
+            get {
+                return ((int)(this["SeedRandomValue"]));
+            }
+            set {
+                this["SeedRandomValue"] = value;
+            }
+        }
     }
 }
