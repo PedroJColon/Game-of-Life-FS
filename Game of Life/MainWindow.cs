@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace Game_of_Life
 {
-    public partial class Form1 : Form
+    public partial class MainWindow : Form
     {
         // X and Y units starting base for Universe
         const int xUniBase = 6;
@@ -43,7 +43,7 @@ namespace Game_of_Life
         // Generation count
         int generations = 0;
 
-        public Form1()
+        public MainWindow()
         {
             InitializeComponent();
 
