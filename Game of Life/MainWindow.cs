@@ -108,7 +108,7 @@ namespace Game_of_Life
 
             // Update status strip generations and Cell Count
             toolStripStatusLabelGenerations.Text = "Generations = " + generations.ToString();
-            toolStripStatusLabelCellCount.Text = "Cell Count = " + cellCount.ToString();
+            UpdateCellCount();
             graphicsPanel1.Invalidate();
         }
 
@@ -226,16 +226,7 @@ namespace Game_of_Life
                 // Toggle the cell's state
                 universe[x, y] = !universe[x, y];
 
-                if (universe[x,y] == true)
-                {
-                    cellCount++;
-                }
-                else if (!universe[x,y])
-                {
-                    cellCount--;
-                }
-
-                toolStripStatusLabelCellCount.Text = "Cell Count = " + cellCount.ToString();
+                UpdateCellCount();
                 // Tell Windows you need to repaint
                 graphicsPanel1.Invalidate();
             }
@@ -490,7 +481,31 @@ namespace Game_of_Life
                 }
                 // Close the file.
                 reader.Close();
+
+                UpdateCellCount();
             }
+        }
+
+        private int CountCellAlive()
+        {
+            int countAliveCell = 0;
+            for (int y = 0; y < universe.GetLength(1); y++)
+            {
+                for (int x = 0; x < universe.GetLength(0); x++)
+                {
+                    if (universe[x, y])
+                    {
+                        countAliveCell++;
+                    }
+                }
+            }
+            return countAliveCell;
+        }
+
+        private void UpdateCellCount()
+        {
+            cellCount = CountCellAlive();
+            toolStripStatusLabelCellCount.Text = "Cell Count = " + cellCount.ToString();
         }
 
         private void DetermineNextCellState(int x, int y, int countNeighbor)
@@ -503,16 +518,12 @@ namespace Game_of_Life
             {
                 // Cell with live and so will be saved into scratchPad
                 scratchPad[x, y] = true;
-                cellCount++;
             }
             // If living cells are less than 2 living OR If living cells more than 3 living, die next gen, die next gen
             else
             {
                 // Cell will die and so will not be saved into scratchPad
                 scratchPad[x, y] = false;
-                if (cellCount != 0)
-                    cellCount--;
-
             }
         }
 
@@ -532,6 +543,8 @@ namespace Game_of_Life
                     Randomize(ref userSeed);
                 }
             }
+
+            UpdateCellCount();
         }
 
         public void Randomize(ref Random seed)
