@@ -843,6 +843,11 @@ namespace Game_of_Life
             gridColor = Properties.Settings.Default.GridColor;
             displayFontColor = Properties.Settings.Default.DisplayFontColor;
 
+            // Revert view Items back to its orignal spot
+            isHUDVisible = Properties.Settings.Default.HUDVisible;
+            isNeighborCountVisible = Properties.Settings.Default.NeighborCountVisible;
+            isGridVisible = Properties.Settings.Default.GridVisible;
+
             graphicsPanel1.Invalidate();
         }
 
@@ -864,6 +869,11 @@ namespace Game_of_Life
             cellColor = Properties.Settings.Default.CellColor;
             gridColor = Properties.Settings.Default.GridColor;
             displayFontColor = Properties.Settings.Default.DisplayFontColor;
+
+            // Revert view items of Form to last saved settings
+            isHUDVisible = Properties.Settings.Default.HUDVisible;
+            isNeighborCountVisible = Properties.Settings.Default.NeighborCountVisible;
+            isGridVisible = Properties.Settings.Default.GridVisible;
 
             graphicsPanel1.Invalidate();
         }
