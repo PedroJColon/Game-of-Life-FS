@@ -154,5 +154,17 @@ namespace Game_of_Life.Properties {
                 this["SeedRandomValue"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Black")]
+        public global::System.Drawing.Color DisplayFontColor {
+            get {
+                return ((global::System.Drawing.Color)(this["DisplayFontColor"]));
+            }
+            set {
+                this["DisplayFontColor"] = value;
+            }
+        }
     }
 }
