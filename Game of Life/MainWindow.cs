@@ -514,7 +514,7 @@ namespace Game_of_Life
             
             // Living cells with 2 or 3 living, live next gen
             // Dead cells with exactly 3 living neighbors, live next gen
-            if ((countNeighbor == 3 && isAliveState) || (countNeighbor == 2 && isAliveState) || (countNeighbor == 3 && !universe[x, y]))
+            if ((countNeighbor == 3 && isAliveState) || (countNeighbor == 2 && isAliveState) || (countNeighbor == 3 && !isAliveState))
             {
                 // Cell with live and so will be saved into scratchPad
                 scratchPad[x, y] = true;
